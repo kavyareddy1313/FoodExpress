@@ -10,14 +10,15 @@ connectDB();
 const app = express();
 
 app.use(cors({
-    origin: true, 
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+  origin: [
+    "http://localhost:5001",
+    "http://localhost:5173",
+    "https://food-express-silk.vercel.app"
+  ],
+  credentials: true
 }));
 
 app.use(express.json());
-
 
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/restaurants', require('./routes/restaurantRoutes'));
@@ -32,7 +33,8 @@ app.get('/', (req, res) => {
 app.use(notFound);
 app.use(errorHandler);
 
-const PORT = 5001; 
+const PORT = process.env.PORT || 5001;
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

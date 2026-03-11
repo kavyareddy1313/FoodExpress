@@ -1,11 +1,14 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState } from 'react';
 import api from '../services/api';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+
     const [userInfo, setUserInfo] = useState(
-        localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null
+        localStorage.getItem('userInfo')
+            ? JSON.parse(localStorage.getItem('userInfo'))
+            : null
     );
 
     const login = async (email, password) => {
@@ -13,13 +16,19 @@ export const AuthProvider = ({ children }) => {
             email: email.trim(),
             password: password.trim()
         });
+
         setUserInfo(data);
         localStorage.setItem('userInfo', JSON.stringify(data));
         return data;
     };
 
     const register = async (name, email, password) => {
-        const { data } = await api.post('/auth/register', { name, email, password });
+        const { data } = await api.post('/auth/register', {
+            name: name.trim(),
+            email: email.trim(),
+            password: password.trim()
+        });
+
         setUserInfo(data);
         localStorage.setItem('userInfo', JSON.stringify(data));
         return data;
