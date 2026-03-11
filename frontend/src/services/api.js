@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'https://foodexpress-og0p.onrender.com/api',
+    baseURL: 'https://foodexpress-og0p.onrender.com',
 });
 
 api.interceptors.request.use((config) => {
