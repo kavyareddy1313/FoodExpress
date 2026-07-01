@@ -28,37 +28,37 @@ In the modern era of digital services, customers expect a seamless and convenien
 ## 🛠️ Tech Stack
 
 ### Frontend
-| Technology | Purpose |
-|---|---|
-| **React 19** | UI library for building component-based interfaces |
-| **React Router v7** | Client-side routing and navigation |
+| Technology          | Purpose                                            |
+| ------------------- | -------------------------------------------------- |
+| **React 19**        | UI library for building component-based interfaces |
+| **React Router v7** | Client-side routing and navigation                 |
 | **Tailwind CSS v4** | Utility-first CSS framework for responsive styling |
-| **Vite 7** | Fast build tool and development server |
-| **Axios** | HTTP client for REST API communication |
-| **Lucide React** | Modern icon library |
-| **React Icons** | Additional icon support |
+| **Vite 7**          | Fast build tool and development server             |
+| **Axios**           | HTTP client for REST API communication             |
+| **Lucide React**    | Modern icon library                                |
+| **React Icons**     | Additional icon support                            |
 
 ### Backend
-| Technology | Purpose |
-|---|---|
-| **Node.js** | JavaScript runtime environment |
-| **Express.js v5** | Web framework for building RESTful APIs |
-| **MongoDB** | NoSQL database for data persistence |
-| **Mongoose v9** | ODM library for MongoDB schema modeling |
-| **JWT (jsonwebtoken)** | Secure token-based authentication |
-| **bcryptjs** | Password hashing and verification |
-| **Cloudinary** | Cloud-based image upload and storage |
-| **Multer** | Middleware for handling multipart/form-data (image uploads) |
+| Technology             | Purpose                                                     |
+| ---------------------- | ----------------------------------------------------------- |
+| **Node.js**            | JavaScript runtime environment                              |
+| **Express.js v5**      | Web framework for building RESTful APIs                     |
+| **MongoDB**            | NoSQL database for data persistence                         |
+| **Mongoose v9**        | ODM library for MongoDB schema modeling                     |
+| **JWT (jsonwebtoken)** | Secure token-based authentication                           |
+| **bcryptjs**           | Password hashing and verification                           |
+| **Cloudinary**         | Cloud-based image upload and storage                        |
+| **Multer**             | Middleware for handling multipart/form-data (image uploads) |
 
 ### DevOps & Deployment
-| Technology | Purpose |
-|---|---|
-| **Docker** | Containerization of frontend and backend services |
-| **Docker Compose** | Multi-container orchestration |
-| **Nginx** | Reverse proxy and static file server for frontend |
+| Technology         | Purpose                                           |
+| ------------------ | ------------------------------------------------- |
+| **Docker**         | Containerization of frontend and backend services |
+| **Docker Compose** | Multi-container orchestration                     |
+| **Nginx**          | Reverse proxy and static file server for frontend |
 | **GitHub Actions** | CI/CD pipeline for automated build and deployment |
-| **AWS EC2** | Cloud hosting for production deployment |
-| **DockerHub** | Container image registry |
+| **AWS EC2**        | Cloud hosting for production deployment           |
+| **DockerHub**      | Container image registry                          |
 
 ---
 
@@ -202,43 +202,43 @@ Food-Booking-System/
 ## 🔌 API Endpoints
 
 ### Authentication
-| Method | Endpoint | Description | Access |
-|--------|----------|-------------|--------|
-| POST | `/api/auth/register` | Register a new user | Public |
-| POST | `/api/auth/login` | Login and receive JWT token | Public |
+| Method | Endpoint             | Description                 | Access |
+| ------ | -------------------- | --------------------------- | ------ |
+| POST   | `/api/auth/register` | Register a new user         | Public |
+| POST   | `/api/auth/login`    | Login and receive JWT token | Public |
 
 ### Restaurants
-| Method | Endpoint | Description | Access |
-|--------|----------|-------------|--------|
-| GET | `/api/restaurants` | Get all restaurants | Public |
-| GET | `/api/restaurants/:id` | Get restaurant by ID | Public |
-| POST | `/api/restaurants` | Create a new restaurant | Admin |
-| PUT | `/api/restaurants/:id` | Update a restaurant | Admin |
-| DELETE | `/api/restaurants/:id` | Delete a restaurant | Admin |
+| Method | Endpoint               | Description             | Access |
+| ------ | ---------------------- | ----------------------- | ------ |
+| GET    | `/api/restaurants`     | Get all restaurants     | Public |
+| GET    | `/api/restaurants/:id` | Get restaurant by ID    | Public |
+| POST   | `/api/restaurants`     | Create a new restaurant | Admin  |
+| PUT    | `/api/restaurants/:id` | Update a restaurant     | Admin  |
+| DELETE | `/api/restaurants/:id` | Delete a restaurant     | Admin  |
 
 ### Food Items
-| Method | Endpoint | Description | Access |
-|--------|----------|-------------|--------|
-| GET | `/api/foods/restaurant/:id` | Get food items by restaurant | Public |
-| POST | `/api/foods` | Add a new food item | Admin |
-| PUT | `/api/foods/:id` | Update a food item | Admin |
-| DELETE | `/api/foods/:id` | Delete a food item | Admin |
+| Method | Endpoint                    | Description                  | Access |
+| ------ | --------------------------- | ---------------------------- | ------ |
+| GET    | `/api/foods/restaurant/:id` | Get food items by restaurant | Public |
+| POST   | `/api/foods`                | Add a new food item          | Admin  |
+| PUT    | `/api/foods/:id`            | Update a food item           | Admin  |
+| DELETE | `/api/foods/:id`            | Delete a food item           | Admin  |
 
 ### Cart
-| Method | Endpoint | Description | Access |
-|--------|----------|-------------|--------|
-| GET | `/api/cart` | Get user's cart | User |
-| POST | `/api/cart` | Add item to cart | User |
-| PUT | `/api/cart` | Update item quantity | User |
-| DELETE | `/api/cart/:itemId` | Remove item from cart | User |
+| Method | Endpoint            | Description           | Access |
+| ------ | ------------------- | --------------------- | ------ |
+| GET    | `/api/cart`         | Get user's cart       | User   |
+| POST   | `/api/cart`         | Add item to cart      | User   |
+| PUT    | `/api/cart`         | Update item quantity  | User   |
+| DELETE | `/api/cart/:itemId` | Remove item from cart | User   |
 
 ### Orders
-| Method | Endpoint | Description | Access |
-|--------|----------|-------------|--------|
-| POST | `/api/orders` | Place a new order | User |
-| GET | `/api/orders` | Get user's order history | User |
-| GET | `/api/orders/all` | Get all orders (admin) | Admin |
-| PUT | `/api/orders/:id/status` | Update order status | Admin |
+| Method | Endpoint                 | Description              | Access |
+| ------ | ------------------------ | ------------------------ | ------ |
+| POST   | `/api/orders`            | Place a new order        | User   |
+| GET    | `/api/orders`            | Get user's order history | User   |
+| GET    | `/api/orders/all`        | Get all orders (admin)   | Admin  |
+| PUT    | `/api/orders/:id/status` | Update order status      | Admin  |
 
 ---
 
@@ -421,20 +421,20 @@ Through the development of this project, the following key learning outcomes wer
 ## 📈 Results of the Project
 
 ### ✅ Functional Achievements
-| Feature | Status |
-|---------|--------|
+| Feature                            | Status      |
+| ---------------------------------- | ----------- |
 | User Registration & Login with JWT | ✅ Completed |
-| Admin Authentication & Dashboard | ✅ Completed |
-| Restaurant CRUD with Image Upload | ✅ Completed |
-| Food Item CRUD with Image Upload | ✅ Completed |
-| Shopping Cart Management | ✅ Completed |
-| Order Placement with Checkout | ✅ Completed |
-| Real-time Order Status Tracking | ✅ Completed |
-| Role-Based Access Control | ✅ Completed |
-| Responsive UI with Tailwind CSS | ✅ Completed |
-| Docker Containerization | ✅ Completed |
-| CI/CD Pipeline (GitHub Actions) | ✅ Completed |
-| AWS EC2 Cloud Deployment | ✅ Completed |
+| Admin Authentication & Dashboard   | ✅ Completed |
+| Restaurant CRUD with Image Upload  | ✅ Completed |
+| Food Item CRUD with Image Upload   | ✅ Completed |
+| Shopping Cart Management           | ✅ Completed |
+| Order Placement with Checkout      | ✅ Completed |
+| Real-time Order Status Tracking    | ✅ Completed |
+| Role-Based Access Control          | ✅ Completed |
+| Responsive UI with Tailwind CSS    | ✅ Completed |
+| Docker Containerization            | ✅ Completed |
+| CI/CD Pipeline (GitHub Actions)    | ✅ Completed |
+| AWS EC2 Cloud Deployment           | ✅ Completed |
 
 ### 🏆 Key Outcomes
 - **End-to-End Delivery:** Successfully built and deployed a complete food delivery platform covering the full software development lifecycle — from design to deployment.
@@ -475,18 +475,18 @@ Through the development of this project, the following key learning outcomes wer
 ## 🔑 Environment Variables Reference
 
 ### Backend (`backend/.env`)
-| Variable | Description |
-|----------|-------------|
-| `PORT` | Server port (default: 5000) |
-| `MONGODB_URI` | MongoDB Atlas connection string |
-| `JWT_SECRET` | Secret key for JWT token signing |
-| `CLOUDINARY_CLOUD_NAME` | Cloudinary account cloud name |
-| `CLOUDINARY_API_KEY` | Cloudinary API key |
-| `CLOUDINARY_API_SECRET` | Cloudinary API secret |
+| Variable                | Description                      |
+| ----------------------- | -------------------------------- |
+| `PORT`                  | Server port (default: 5000)      |
+| `MONGODB_URI`           | MongoDB Atlas connection string  |
+| `JWT_SECRET`            | Secret key for JWT token signing |
+| `CLOUDINARY_CLOUD_NAME` | Cloudinary account cloud name    |
+| `CLOUDINARY_API_KEY`    | Cloudinary API key               |
+| `CLOUDINARY_API_SECRET` | Cloudinary API secret            |
 
 ### Frontend (`frontend/.env`)
-| Variable | Description |
-|----------|-------------|
+| Variable       | Description          |
+| -------------- | -------------------- |
 | `VITE_API_URL` | Backend API base URL |
 
 ---
@@ -510,3 +510,5 @@ This project is licensed under the **ISC License**.
 <p align="center">
   Built with ❤️ using the MERN Stack
 </p>
+
+-------------
