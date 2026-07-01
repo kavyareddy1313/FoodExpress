@@ -443,10 +443,20 @@ Through the development of this project, the following key learning outcomes wer
 - **Secure Platform:** Implemented multi-layered security with password hashing, JWT authentication, role-based middleware, and automatic session invalidation on token expiry.
 - **Cloud-Native Deployment:** The application runs as containerized microservices on AWS EC2, demonstrating practical knowledge of modern cloud deployment practices.
 
-### 🌐 Live Deployment
-- **Frontend:** Deployed via Vercel — [food-express-silk.vercel.app](https://food-express-silk.vercel.app)
-- **Backend API:** Hosted on AWS EC2 instance
-- **Docker Images:** Published on DockerHub
+### 🌐 Live Deployment Architectures
+
+This project features a **Dual Deployment Strategy** to demonstrate proficiency in both traditional VM-based DevOps and modern Serverless/PaaS Infrastructure as Code.
+
+#### 1. Serverless & PaaS (Live 24/7 Demo)
+- **Frontend:** Vercel (Auto-deploy on push)
+- **Backend:** Render (Configured via `render.yaml` Infrastructure as Code)
+- **Status:** **[Live Demo Available Here](https://food-express-silk.vercel.app)**
+
+#### 2. Enterprise Cloud VM (CI/CD Pipeline)
+- **Frontend & Backend:** Containerized with Docker
+- **Hosting:** AWS EC2 Instance (with Nginx reverse proxy)
+- **Pipeline:** GitHub Actions (`ci.yml` & `cd.yml`) automates testing, building multi-arch Docker images, pushing to DockerHub, and SSH deployment to EC2.
+- **Docker Images:** 
   - `kavya00/food-express-backend:latest`
   - `kavya00/food-express-frontend:latest`
 
