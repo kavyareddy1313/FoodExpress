@@ -1,0 +1,28 @@
+# ============================================
+# Example Variable Values
+# Copy this file to terraform.tfvars and fill in your values
+# DO NOT commit terraform.tfvars to version control
+# ============================================
+
+aws_region   = "ap-south-1"
+environment  = "production"
+project_name = "foodexpress"
+
+# EC2 Configuration
+instance_type  = "t2.micro"
+key_pair_name  = "your-key-pair-name"
+
+# Auto Scaling
+min_instances     = 1
+max_instances     = 3
+desired_instances = 1
+
+# Application Secrets (use environment variables or Terraform Cloud for production)
+# mongodb_uri = "mongodb+srv://..."
+# jwt_secret  = "your-jwt-secret"
+
+# Docker
+dockerhub_username = "kavya00"
+
+# Domain (optional)
+# domain_name = "foodexpress.example.com"

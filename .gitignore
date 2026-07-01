@@ -1,0 +1,25 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Terraform
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.backup
+terraform/*.tfvars
+terraform/.terraform.lock.hcl
+terraform/tfplan
+
+# Docker
+*.tar
+
+# Logs
+*.log
+
+# Monitoring data
+monitoring/prometheus-data/
+monitoring/grafana-data/
