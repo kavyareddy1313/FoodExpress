@@ -60,40 +60,6 @@ curl http://localhost:5000/metrics
 
 ---
 
-## Terraform Infrastructure Setup
-
-### Prerequisites
-- AWS CLI configured with credentials
-- Terraform v1.5+
-
-### Steps
-```bash
-cd terraform
-
-# Initialize Terraform
-terraform init
-
-# Copy example variables
-cp terraform.tfvars.example terraform.tfvars
-# Edit terraform.tfvars with your values
-
-# Preview changes
-terraform plan
-
-# Apply infrastructure
-terraform apply
-
-# Get outputs
-terraform output
-```
-
-### Key Outputs
-- `alb_dns_name` — Application URL
-- `ecr_backend_url` — Backend ECR repository
-- `ecr_frontend_url` — Frontend ECR repository
-
----
-
 ## Kubernetes Deployment
 
 ### Prerequisites
@@ -152,9 +118,6 @@ docker-compose -f docker-compose.monitoring.yml up -d
 | `EC2_KEY` | SSH private key for EC2 |
 | `MONGODB_URI` | MongoDB connection string |
 | `JWT_SECRET` | JWT signing secret |
-| `AWS_ACCESS_KEY_ID` | AWS access key for Terraform |
-| `AWS_SECRET_ACCESS_KEY` | AWS secret key for Terraform |
-| `KEY_PAIR_NAME` | EC2 key pair name |
 
 ### GitHub Environments
 1. **staging** — Auto-deploy after CI passes
