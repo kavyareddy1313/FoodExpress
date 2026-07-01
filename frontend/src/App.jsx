@@ -1,52 +1,56 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import { CartProvider } from './context/CartContext';
-import Navbar from './components/Navbar';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import RestaurantDetails from './pages/RestaurantDetails';
-import Cart from './pages/Cart';
-import Checkout from './pages/Checkout';
-import Orders from './pages/Orders';
-import AdminDashboard from './pages/AdminDashboard';
-import ManageRestaurants from './pages/ManageRestaurants';
-import ManageFoods from './pages/ManageFoods';
-import ManageOrders from './pages/ManageOrders';
-import AdminLogin from './pages/AdminLogin';
-import ProtectedRoute from './components/ProtectedRoute';
-import Footer from './components/Footer';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import './App.css';
 
 function App() {
-  return (
-    <AuthProvider>
-      <CartProvider>
-        <Router>
-          <div className="min-h-screen bg-gray-50">
-            <Navbar />
-            <main className="container mx-auto px-4 py-8 flex-grow">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/restaurant/:id" element={<RestaurantDetails />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/checkout" element={<Checkout />} />
-                <Route path="/orders" element={<Orders />} />
+  const [health, setHealth] = useState({ status: 'loading...', message: '', database: '' });
+  const [error, setError] = useState(null);
 
-                {/* Admin Routes */}
-                <Route path="/admin/login" element={<AdminLogin />} />
-                <Route path="/admin/dashboard" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
-                <Route path="/admin/restaurants" element={<ProtectedRoute adminOnly><ManageRestaurants /></ProtectedRoute>} />
-                <Route path="/admin/restaurants/:id/foods" element={<ProtectedRoute adminOnly><ManageFoods /></ProtectedRoute>} />
-                <Route path="/admin/orders" element={<ProtectedRoute adminOnly><ManageOrders /></ProtectedRoute>} />
-              </Routes>
-            </main>
-            <Footer />
-          </div>
-        </Router>
-      </CartProvider>
-    </AuthProvider>
+  useEffect(() => {
+    const fetchHealth = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/health');
+        setHealth(response.data);
+      } catch (err) {
+        setError('Failed to connect to backend API');
+        console.error(err);
+      }
+    };
+    
+    fetchHealth();
+  }, []);
+
+  return (
+    <div className="container">
+      <h1>🍔 FoodExpress (DevOps Skeleton)</h1>
+      <p>This is a minimal 3-tier architecture skeleton for building CI/CD and Cloud pipelines.</p>
+      
+      <div className="status-card">
+        <h2>System Status</h2>
+        
+        {error ? (
+          <div className="error">❌ {error}</div>
+        ) : (
+          <ul className="status-list">
+            <li>
+              <strong>API Status:</strong> 
+              <span className={health.status === 'ok' ? 'success' : 'pending'}>
+                {health.status === 'ok' ? ' ✅ Online' : ' ⏳ ' + health.status}
+              </span>
+            </li>
+            <li>
+              <strong>Database:</strong> 
+              <span className={health.database === 'connected' ? 'success' : 'error'}>
+                {health.database === 'connected' ? ' ✅ Connected' : ' ❌ ' + health.database}
+              </span>
+            </li>
+            {health.message && (
+              <li><strong>Message:</strong> {health.message}</li>
+            )}
+          </ul>
+        )}
+      </div>
+    </div>
   );
 }
 
