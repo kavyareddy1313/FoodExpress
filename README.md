@@ -505,10 +505,3 @@ Through the development of this project, the following key learning outcomes wer
 
 This project is licensed under the **ISC License**.
 
----
-
-<p align="center">
-  Built with ❤️ using the MERN Stack
-</p>
-
--------------
