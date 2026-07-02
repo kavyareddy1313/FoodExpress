@@ -1,230 +1,157 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
+import api from '../services/api';
 
 export default function Checkout() {
-  return (
-    <>
-<div>
-  {/* TopNavBar (Shared Component) */}
-  <header className="bg-surface dark:bg-primary-container docked full-width top-0 shadow-md dark:bg-primary-container z-50 sticky">
-    <div className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
-      <div className="flex items-center gap-gutter">
-        <a className="font-headline-md text-headline-md font-bold text-primary dark:text-on-primary-fixed" href="#">FoodExpress</a>
-        <nav className="hidden md:flex gap-6 ml-8">
-          <a className="text-secondary font-label-bold border-b-2 border-secondary pb-1 active:scale-95 transition-transform" href="#">Restaurants</a>
-          <a className="text-on-surface-variant font-label-bold pb-1 hover:text-secondary transition-colors duration-200 active:scale-95 transition-transform" href="#">My Orders</a>
-        </nav>
-      </div>
-      <div className="flex items-center gap-4">
-        <button className="md:hidden text-on-surface">
-          <span className="material-symbols-outlined">menu</span>
-        </button>
-        <button className="hidden md:flex bg-secondary text-on-secondary px-6 py-2 rounded-full font-label-bold hover:-translate-y-0.5 transition-transform shadow-sm">
-          JOIN NOW
-        </button>
-      </div>
-    </div>
-  </header>
-  {/* Main Content Canvas */}
-  <main className="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-stack-lg md:py-16">
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter lg:gap-8">
-      {/* Left Column: Cart Items */}
-      <div className="lg:col-span-8 flex flex-col gap-stack-lg">
-        <div>
-          <h1 className="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg text-primary mb-stack-md">Your Cart</h1>
-        </div>
-        {/* Restaurant Header */}
-        <div className="bg-surface-container-lowest rounded-xl p-6 shadow-soft flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-lg bg-surface-container overflow-hidden flex-shrink-0">
-              <img alt="Restaurant Image" className="w-full h-full object-cover" data-alt="A high quality close up photograph of a steaming hot Hyderabadi biryani dish served in a traditional copper handi. The lighting is warm and inviting, highlighting the vibrant yellow and orange hues of the saffron-infused rice and tender meat. The setting is a clean, modern high-end restaurant table with a dark, sophisticated background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXOU6MNdBEyHGef-zOj1DZwxD0KwK5d_n1M2_j80C1O2T8V3Wrs5EPB5qANPuXoqcE5R83rdfh9xr8nutgZ-T3wKHUec0IFmigcXZaNiNOHvowWagp0yf1UXEUoqdS1CKLAaFbMe3zvUOisv91JpEGx2ORgmFQHwvPs-RKdYM_BcMqmGxDXWGt4tSNya4kM0P_2d3u05f_MI0jCyiqdi5GfSkoWUuwp7um48ziZ4VSjI-BtopoQGmjwtJNDSD0b0aXAbnzb85hqg8" />
-            </div>
-            <div>
-              <h2 className="font-headline-sm text-headline-sm text-primary mb-1">Paradise Biryani</h2>
-              <div className="flex items-center gap-2 text-on-surface-variant text-sm">
-                <span className="material-symbols-outlined text-[16px] text-secondary">schedule</span>
-                <span>Delivery in 25-35 mins</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        {/* Cart Items List */}
-        <div className="bg-surface-container-lowest rounded-xl shadow-soft p-6 flex flex-col gap-6">
-          {/* Item 1 */}
-          <div className="flex items-start md:items-center gap-4 border-b border-surface-variant pb-6">
-            <div className="w-20 h-20 rounded-lg bg-surface-container overflow-hidden flex-shrink-0">
-              <img alt="Hyderabadi Chicken Biryani" className="w-full h-full object-cover" data-alt="A top-down view of a plate of rich, aromatic Hyderabadi Chicken Biryani. The rice is perfectly cooked, separated, and layered with tender pieces of marinated chicken. A side of raita in a small white bowl sits next to it. The lighting is bright and modern, contrasting against a clean, minimal white table surface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDT5qrdZOuUiDQoFs5b_IclOSUs-3T22buAsRillMMDN1kJm8GLMR9N1kWGkqg6AdIdzqS87RrOBg0IBDtFpFvuPJKWdfXp2yQyOMI4dx7-VS-rqAHop9ftbUsUwqUj_VtHJcqLpCSIPwzXEPV-Pg0kkKg4SvzrIxz-6x66yyxwjlw0Zsnz5YU847tL6YAbEYxUAzYPczjYwRL3GGbwHaPAXWc7rNlSF-wG2mPSomNQmmbJgddzfMlBx-u-VxfXp9WcWVNzxc3bWM" />
-            </div>
-            <div className="flex-grow flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div>
-                <h3 className="font-label-bold text-label-bold text-primary mb-1">Hyderabadi Chicken Biryani</h3>
-                <div className="font-price-tag text-price-tag text-primary">₹350</div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center border border-outline-variant rounded-lg bg-surface">
-                  <button aria-label="Decrease quantity" className="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-secondary transition-colors">
-                    <span className="material-symbols-outlined text-[20px]">remove</span>
-                  </button>
-                  <span className="w-8 text-center font-label-bold text-primary">1</span>
-                  <button aria-label="Increase quantity" className="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-secondary transition-colors">
-                    <span className="material-symbols-outlined text-[20px]">add</span>
-                  </button>
-                </div>
-                <button aria-label="Remove item" className="text-on-surface-variant hover:text-error transition-colors p-2">
-                  <span className="material-symbols-outlined">delete</span>
-                </button>
-              </div>
-            </div>
-          </div>
-          {/* Item 2 */}
-          <div className="flex items-start md:items-center gap-4 pb-2">
-            <div className="w-20 h-20 rounded-lg bg-surface-container overflow-hidden flex-shrink-0">
-              <img alt="Paneer Tikka" className="w-full h-full object-cover" data-alt="A close up shot of Paneer Tikka skewers placed on a modern matte black plate. The paneer cubes are brightly colored, charred at the edges, and garnished with fresh cilantro and lemon wedges. The background is a clean, bright, light-mode dining setting with natural daylight pouring in." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAleBWa20sI6Bpu0oJTeDjDWy8HlQj4vY9m3BhRDskDvCNVHXAHVuVfPYJMGAw0p2khCywCzLxUmlhpKPRgJ9m7LALQ2WBOVA5h7e8IeEDlQHM8EjdZhdOMFeCeVe1KXl8Cx0p8cGAm_gPppVWra10slwsqpe-Z82VaoFvFgivviENZhPck4sznoQzLXiIDR7PT3BX0ANEwbl9zvOlOyen7tC2DktqDY5kfJWlwu6Cj-zQTF4Op-TJ6XUv39_MLdAXYx8rbqR9BriE" />
-            </div>
-            <div className="flex-grow flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div>
-                <h3 className="font-label-bold text-label-bold text-primary mb-1">Paneer Tikka</h3>
-                <div className="font-price-tag text-price-tag text-primary">₹220</div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center border border-outline-variant rounded-lg bg-surface">
-                  <button aria-label="Decrease quantity" className="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-secondary transition-colors">
-                    <span className="material-symbols-outlined text-[20px]">remove</span>
-                  </button>
-                  <span className="w-8 text-center font-label-bold text-primary">1</span>
-                  <button aria-label="Increase quantity" className="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-secondary transition-colors">
-                    <span className="material-symbols-outlined text-[20px]">add</span>
-                  </button>
-                </div>
-                <button aria-label="Remove item" className="text-on-surface-variant hover:text-error transition-colors p-2">
-                  <span className="material-symbols-outlined">delete</span>
-                </button>
-              </div>
-            </div>
-          </div>
-          <button className="flex items-center gap-2 text-secondary font-label-bold text-label-bold self-start hover:text-on-secondary-container transition-colors mt-2">
-            <span className="material-symbols-outlined text-[20px]">add_circle</span>
-            Add more items
-          </button>
-        </div>
-        {/* Promo Code Section */}
-        <div className="bg-surface-container-lowest rounded-xl shadow-soft p-6">
-          <h3 className="font-headline-sm text-headline-sm text-primary mb-4">Offers &amp; Benefits</h3>
-          <div className="flex gap-2 mb-4">
-            <input className="flex-grow rounded-xl border border-outline-variant focus:border-secondary focus:ring-1 focus:ring-secondary px-4 py-3 font-body-md text-primary bg-surface outline-none transition-colors placeholder:text-on-surface-variant/50" placeholder="Enter promo code" type="text" defaultValue="WELCOME50" />
-            <button className="bg-primary text-on-primary px-6 rounded-xl font-label-bold hover:bg-on-surface transition-colors">
-              Apply
-            </button>
-          </div>
-          <div className="inline-flex items-center gap-2 bg-secondary/10 border border-secondary/20 text-secondary px-3 py-1.5 rounded-lg text-sm font-label-bold">
-            <span className="material-symbols-outlined text-[16px]">check_circle</span>
-            <span>WELCOME50 applied (-₹100)</span>
-            <button className="ml-2 text-secondary hover:text-primary transition-colors">
-              <span className="material-symbols-outlined text-[16px]">close</span>
-            </button>
-          </div>
-        </div>
-      </div>
-      {/* Right Column: Sticky Summary */}
-      <div className="lg:col-span-4">
-        <div className="sticky top-24 flex flex-col gap-6">
-          {/* Bill Details */}
-          <div className="bg-surface-container-lowest rounded-xl shadow-floating p-6 border border-surface-variant">
-            <h3 className="font-headline-sm text-headline-sm text-primary mb-4 border-b border-surface-variant pb-4">Bill Details</h3>
-            <div className="flex flex-col gap-3 font-body-md text-on-surface-variant mb-4">
-              <div className="flex justify-between">
-                <span>Item Total</span>
-                <span className="font-label-bold text-primary">₹570</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Delivery Fee</span>
-                <span className="font-label-bold text-primary">₹40</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Platform Fee</span>
-                <span className="font-label-bold text-primary">₹5</span>
-              </div>
-              <div className="flex justify-between">
-                <span>GST and Charges</span>
-                <span className="font-label-bold text-primary">₹28</span>
-              </div>
-              <div className="flex justify-between text-secondary">
-                <span>Discount</span>
-                <span className="font-label-bold">-₹100</span>
-              </div>
-            </div>
-            <div className="flex justify-between items-center border-t border-surface-variant pt-4 mb-6">
-              <span className="font-headline-sm text-headline-sm text-primary">To Pay</span>
-              <span className="font-display-lg-mobile text-display-lg-mobile text-primary">₹543</span>
-            </div>
-            {/* Delivery Address */}
-            <div className="bg-surface rounded-lg p-4 mb-6 border border-outline-variant">
-              <div className="flex justify-between items-start mb-2">
-                <div className="flex items-center gap-2 text-primary font-label-bold">
-                  <span className="material-symbols-outlined text-secondary text-[20px]">location_on</span>
-                  Home
-                </div>
-                <button className="text-secondary text-sm font-label-bold hover:underline">Change</button>
-              </div>
-              <p className="text-on-surface-variant text-sm pl-7">Banjara Hills, Hyderabad</p>
-            </div>
-            {/* Payment Selector */}
-            <div className="mb-6">
-              <h4 className="font-label-bold text-label-bold text-primary mb-3">Pay using</h4>
-              <div className="flex flex-wrap gap-2">
-                <button className="flex items-center gap-2 px-4 py-2 rounded-full border border-secondary bg-secondary/5 text-secondary font-label-bold transition-colors">
-                  <span className="material-symbols-outlined text-[18px]">account_balance_wallet</span>
-                  UPI
-                </button>
-                <button className="flex items-center gap-2 px-4 py-2 rounded-full border border-outline-variant text-on-surface-variant hover:bg-surface-variant transition-colors">
-                  <span className="material-symbols-outlined text-[18px]">credit_card</span>
-                  Card
-                </button>
-                <button className="flex items-center gap-2 px-4 py-2 rounded-full border border-outline-variant text-on-surface-variant hover:bg-surface-variant transition-colors">
-                  <span className="material-symbols-outlined text-[18px]">payments</span>
-                  Cash
-                </button>
-              </div>
-            </div>
-            <button className="w-full bg-secondary text-on-secondary py-4 rounded-xl font-headline-sm text-headline-sm hover:bg-on-secondary-container hover:-translate-y-0.5 transition-all shadow-md flex justify-center items-center gap-2">
-              Place Order <span className="opacity-50 mx-1">·</span> ₹543
-            </button>
-          </div>
-          {/* Trust Row */}
-          <div className="flex justify-center gap-6 px-4 py-2">
-            <div className="flex flex-col items-center gap-1 text-center">
-              <span className="material-symbols-outlined text-outline text-[24px]">verified_user</span>
-              <span className="text-xs text-on-surface-variant font-label-bold text-[10px] uppercase tracking-wider">100% Safe<br />Payments</span>
-            </div>
-            <div className="flex flex-col items-center gap-1 text-center">
-              <span className="material-symbols-outlined text-outline text-[24px]">local_shipping</span>
-              <span className="text-xs text-on-surface-variant font-label-bold text-[10px] uppercase tracking-wider">On-time<br />Guarantee</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </main>
-  {/* Footer (Shared Component) */}
-  <footer className="bg-primary-container dark:bg-surface-container-lowest w-full rounded-t-xl mt-auto">
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin-desktop py-stack-lg max-w-container-max mx-auto font-body-md text-body-md">
-      <div className="flex flex-col gap-4">
-        <span className="font-headline-sm text-headline-sm text-on-primary">FoodExpress</span>
-        <p className="text-on-primary-container text-sm">© 2024 FoodExpress. All rights reserved.</p>
-      </div>
-      <div className="flex flex-col gap-3">
-        <a className="text-on-primary-container hover:text-secondary-fixed transition-colors opacity-80 hover:opacity-100" href="#">Company Info</a>
-      </div>
-      <div className="flex flex-col gap-3">
-        <a className="text-on-primary-container hover:text-secondary-fixed transition-colors opacity-80 hover:opacity-100" href="#">Support</a>
-      </div>
-      <div className="flex flex-col gap-3">
-        <a className="text-on-primary-container hover:text-secondary-fixed transition-colors opacity-80 hover:opacity-100" href="#">Admin Portal</a>
-        <a className="text-on-primary-container hover:text-secondary-fixed transition-colors opacity-80 hover:opacity-100" href="#">App Store</a>
-      </div>
-    </div>
-  </footer>
-</div>
+  const { cart, itemCount, updateQuantity, removeFromCart } = useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [address, setAddress] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('cod');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-    </>
+  const handlePlaceOrder = async (e) => {
+    e.preventDefault();
+    if (!address.trim()) { setError('Please enter a delivery address'); return; }
+    setLoading(true);
+    setError('');
+    
+    try {
+      if (paymentMethod === 'cod') {
+        const { data } = await api.post('/orders', { deliveryAddress: address, paymentMethod });
+        navigate(`/tracking/${data._id}`);
+      } else if (paymentMethod === 'online') {
+        // 1. Create Razorpay order on backend
+        const { data: orderData } = await api.post('/orders/razorpay');
+        
+        // 2. Initialize Razorpay Checkout
+        const options = {
+          key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_SJb1Khp4Xsxh2j', // In a real app, inject this via an endpoint or env
+          amount: orderData.amount,
+          currency: orderData.currency,
+          name: 'FoodExpress',
+          description: 'Food Order Payment',
+          order_id: orderData.id,
+          handler: async function (response) {
+            try {
+              // 3. Verify payment on backend
+              const verifyRes = await api.post('/orders/razorpay/verify', {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                deliveryAddress: address
+              });
+              navigate(`/tracking/${verifyRes.data.order._id}`);
+            } catch (err) {
+              setError(err.response?.data?.message || 'Payment verification failed');
+            }
+          },
+          prefill: {
+            name: user?.name || '',
+            email: user?.email || '',
+          },
+          theme: {
+            color: '#FF5722', // Secondary color
+          }
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.on('payment.failed', function (response) {
+          setError('Payment failed or was cancelled');
+        });
+        rzp.open();
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to place order');
+    } finally { setLoading(false); }
+  };
+
+  if (itemCount === 0) {
+    return (
+      <div className="min-h-screen bg-surface flex flex-col items-center justify-center gap-4">
+        <h2 className="text-2xl font-bold text-on-surface">Your cart is empty</h2>
+        <p className="text-on-surface-variant">Add some delicious items from our restaurants!</p>
+        <Link to="/" className="bg-secondary text-on-secondary px-6 py-3 rounded-lg font-bold hover:-translate-y-0.5 transition-all">Browse Restaurants</Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-surface flex flex-col">
+      <header className="bg-surface sticky top-0 z-50 shadow-md">
+        <div className="flex justify-between items-center px-6 md:px-10 w-full max-w-[1280px] mx-auto h-16">
+          <Link to="/" className="font-bold text-xl text-on-surface">🍔 FoodExpress</Link>
+          <span className="text-sm text-on-surface-variant">Checkout ({itemCount} items)</span>
+        </div>
+      </header>
+
+      <main className="flex-grow w-full max-w-[1280px] mx-auto px-6 md:px-10 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Cart Items */}
+          <div className="lg:col-span-2">
+            <h2 className="text-2xl font-bold text-on-surface mb-6">Your Cart</h2>
+            <div className="flex flex-col gap-4">
+              {cart.items?.map((item) => (
+                <div key={item.foodItemId} className="bg-white rounded-xl shadow-sm border border-outline-variant/20 p-4 flex items-center gap-4">
+                  {item.image && <img src={item.image} alt={item.name} className="w-20 h-20 rounded-lg object-cover" />}
+                  <div className="flex-1">
+                    <h3 className="font-bold text-on-surface">{item.name}</h3>
+                    <p className="text-sm text-on-surface-variant">{item.restaurantName}</p>
+                    <p className="font-bold text-secondary mt-1">₹{item.price}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => updateQuantity(item.foodItemId, item.quantity - 1)} className="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center font-bold text-on-surface hover:bg-outline-variant transition-colors">−</button>
+                    <span className="w-8 text-center font-bold">{item.quantity}</span>
+                    <button onClick={() => updateQuantity(item.foodItemId, item.quantity + 1)} className="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-bold hover:opacity-90 transition-opacity">+</button>
+                  </div>
+                  <button onClick={() => removeFromCart(item.foodItemId)} className="text-error hover:text-on-error-container transition-colors p-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Order Summary */}
+          <div>
+            <div className="bg-white rounded-xl shadow-md border border-outline-variant/20 p-6 sticky top-24">
+              <h3 className="text-lg font-bold text-on-surface mb-4">Order Summary</h3>
+              <div className="flex justify-between text-sm text-on-surface-variant mb-2"><span>Subtotal</span><span>₹{cart.totalAmount}</span></div>
+              <div className="flex justify-between text-sm text-on-surface-variant mb-2"><span>Delivery Fee</span><span className="text-secondary font-bold">FREE</span></div>
+              <hr className="my-3 border-outline-variant" />
+              <div className="flex justify-between font-bold text-on-surface text-lg mb-6"><span>Total</span><span>₹{cart.totalAmount}</span></div>
+
+              {error && <div className="bg-error-container text-on-error-container p-3 rounded-lg mb-4 text-sm">{error}</div>}
+
+              <form onSubmit={handlePlaceOrder} className="flex flex-col gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-on-surface mb-1">Delivery Address</label>
+                  <textarea value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Enter your full delivery address" required rows={3} className="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface focus:ring-2 focus:ring-secondary text-sm" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-on-surface mb-2">Payment Method</label>
+                  <div className="flex gap-3">
+                    <label className={`flex-1 flex items-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition-all ${paymentMethod === 'cod' ? 'border-secondary bg-secondary/5' : 'border-outline-variant'}`}>
+                      <input type="radio" name="payment" value="cod" checked={paymentMethod === 'cod'} onChange={(e) => setPaymentMethod(e.target.value)} className="text-secondary" />
+                      <span className="text-sm font-semibold">Cash on Delivery</span>
+                    </label>
+                    <label className={`flex-1 flex items-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition-all ${paymentMethod === 'online' ? 'border-secondary bg-secondary/5' : 'border-outline-variant'}`}>
+                      <input type="radio" name="payment" value="online" checked={paymentMethod === 'online'} onChange={(e) => setPaymentMethod(e.target.value)} className="text-secondary" />
+                      <span className="text-sm font-semibold">Online Payment</span>
+                    </label>
+                  </div>
+                </div>
+                <button type="submit" disabled={loading} className="w-full bg-secondary text-on-secondary py-3 rounded-lg font-bold hover:-translate-y-0.5 transition-all disabled:opacity-50">
+                  {loading ? 'Placing Order...' : `Place Order — ₹${cart.totalAmount}`}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
   );
 }
