@@ -1,7 +1,8 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
 
-// Import all generated pages
 import FoodExpressHomepage from './pages/FoodExpressHomepage';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
@@ -12,10 +13,20 @@ import Checkout from './pages/Checkout';
 import OrderTracking from './pages/OrderTracking';
 import MyOrders from './pages/MyOrders';
 import AdminDashboard from './pages/AdminDashboard';
-import LoadingResults from './pages/LoadingResults';
-import NoResults from './pages/NoResults';
 
-function App() {
+function ProtectedRoute({ children }) {
+  const { isAuthenticated, loading } = useAuth();
+  if (loading) return null;
+  return isAuthenticated ? children : <Navigate to="/login" />;
+}
+
+function AdminRoute({ children }) {
+  const { isAdmin, loading } = useAuth();
+  if (loading) return null;
+  return isAdmin ? children : <Navigate to="/" />;
+}
+
+function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<FoodExpressHomepage />} />
@@ -24,13 +35,21 @@ function App() {
       <Route path="/otp" element={<OTPVerification />} />
       <Route path="/search" element={<RestaurantSearchResults />} />
       <Route path="/restaurant/:id" element={<RestaurantDetail />} />
-      <Route path="/checkout" element={<Checkout />} />
-      <Route path="/tracking" element={<OrderTracking />} />
-      <Route path="/orders" element={<MyOrders />} />
-      <Route path="/admin" element={<AdminDashboard />} />
-      <Route path="/loading" element={<LoadingResults />} />
-      <Route path="/no-results" element={<NoResults />} />
+      <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+      <Route path="/tracking/:id" element={<ProtectedRoute><OrderTracking /></ProtectedRoute>} />
+      <Route path="/orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
+      <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
     </Routes>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <CartProvider>
+        <AppRoutes />
+      </CartProvider>
+    </AuthProvider>
   );
 }
 
