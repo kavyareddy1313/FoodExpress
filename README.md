@@ -36,3 +36,4 @@ The frontend will run on `http://localhost:5173`.
 ---
 *Developed as a DevOps Portfolio Project to demonstrate Docker, CI/CD, Terraform, Kubernetes, and Observability.*
 <!-- dummy commit 1 -->
+<!-- dummy commit 2 -->
