@@ -1,0 +1,89 @@
+name: Continuous Deployment (CD)
+
+on:
+  push:
+    branches: [ "main" ]
+
+# Requires the following GitHub Secrets:
+# - VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID (For Frontend)
+# - RENDER_DEPLOY_HOOK (For Backend Render)
+# - EC2_HOST, EC2_USER, EC2_SSH_KEY (For Backend EC2)
+
+jobs:
+  deploy-frontend-vercel:
+    name: Deploy Frontend to Vercel
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          working-directory: ./frontend
+
+  build-push-backend-docker:
+    name: Build & Push Backend Docker Image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/foodexpress-backend:latest
+
+  deploy-backend-render:
+    name: Deploy Backend to Render
+    needs: build-push-backend-docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render Deploy Hook
+        run: |
+          if [ -z "${{ secrets.RENDER_DEPLOY_HOOK }}" ]; then
+            echo "RENDER_DEPLOY_HOOK is not set, skipping Render deployment."
+            exit 0
+          fi
+          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
+
+  deploy-backend-ec2:
+    name: Deploy Backend to EC2
+    needs: build-push-backend-docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execute Remote SSH Commands
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          GHCR_PAT: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          envs: GHCR_PAT
+          # In this script, we assume docker and docker-compose are installed on the EC2 instance
+          # and a docker-compose.yml file is available in the user's home directory.
+          script: |
+            if [ -z "${{ secrets.EC2_HOST }}" ]; then
+              echo "EC2 configuration is missing, skipping EC2 deployment."
+              exit 0
+            fi
+            echo $GHCR_PAT | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            docker pull ghcr.io/${{ github.repository_owner }}/foodexpress-backend:latest
+            docker-compose up -d --no-deps --build backend
