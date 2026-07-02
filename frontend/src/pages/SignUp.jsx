@@ -1,103 +1,90 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export default function SignUp() {
-  return (
-    <>
-{/* Split Screen Layout */}
-<div className="flex w-full min-h-screen">
-  {/* Left Panel (40%) - Dark Navy Panel with Food Collage */}
-  <div className="hidden lg:flex w-2/5 bg-primary-container text-on-primary relative flex-col justify-between overflow-hidden">
-    {/* Decorative Glass Elements */}
-    <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-secondary/20 rounded-full blur-3xl z-0 pointer-events-none" />
-    <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-tertiary-fixed/20 rounded-full blur-3xl z-0 pointer-events-none" />
-    <div className="relative z-10 p-margin-desktop flex-grow flex flex-col justify-center items-center">
-      <h1 className="font-display-lg text-display-lg text-on-primary-fixed mb-section-gap text-center max-w-md relative z-20">
-        Deliciousness, <br />delivered fast.
-      </h1>
-      {/* Food Collage Container */}
-      <div className="relative w-full max-w-lg aspect-square mt-8">
-        {/* Main Image */}
-        <div className="absolute inset-0 bg-cover bg-center rounded-[24px] shadow-xl z-10 transform -rotate-2" data-alt="A highly stylized, premium food photography shot of a gourmet double cheeseburger. The burger is incredibly appetizing with melted cheese, fresh lettuce, and perfect grill marks on the patty. It sits on a dark, textured slate surface. The lighting is dramatic and moody, emphasizing the textures and colors of the food. The scene is shot from a slightly high angle, creating a dynamic and modern composition suitable for a high-end food delivery app." style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDw3y9IgKbNB0c3_J_LlIxmEb1iQSLzi4pEKCgddHH3u3dGFmrRcAGSIxQ9-WkapYhbMZ51kf1m_kgmcKmQgLDpHLB8einMItVI-XGBXqWW5yUYBaWNsqZ-EaqNWky4sFi9XZ-ggr3nMUreJ7GSo9Xyr3rKUURu9IhGgxXZzDVglMgeM10YMaR_KR93_Ua_lDe4l8M3ZClVwI86masUddT1qFxwqby-IvrYr1yOdEm97hKfjioDgGviFk5E4YhMfxW71q5p6ZGXABA")'}} />
-        {/* Floating Accent Images */}
-        <div className="absolute -top-12 -right-8 w-48 h-48 bg-cover bg-center rounded-full shadow-2xl z-20 border-4 border-primary-container transform rotate-6" data-alt="A close-up, macro photography shot of vibrant, fresh green basil leaves and bright red cherry tomatoes. The composition is tight, focusing on the dewdrops on the leaves and the shiny skin of the tomatoes. The lighting is soft and natural, creating a fresh and appetizing feel. The background is softly blurred, isolating the fresh ingredients. This image acts as a fresh accent piece in a modern food app layout." style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCkDUUa9ypcmBkQEg8LVADtFTQffjGoB_RQJbYIivqQhQ0-_cbp-iTHrUgFA53BDq0W_SChdoFIXdxd1OW1Xqh5EYvqVE7i6XTjYqwpsoZBYSh3FiWLeQPEEnm_W_rzEVMCMk6_wH0p40Rw_jh3KFUG6EZN2WfhyapAoMPRPt52aJWb__ZfgP-JE_Sc5AeomY9RKK2MLHIrRIitmYGNh9xIf3-xYBnSUEc-bi87e0tHccoKtQgF5zfQvdhRuaJxjSGK-Nbkqbz0Wmw")'}} />
-        <div className="absolute -bottom-8 -left-12 w-56 h-56 bg-cover bg-center rounded-[24px] shadow-2xl z-20 border-4 border-primary-container transform -rotate-12" data-alt="A dynamic, high-speed photography shot of golden french fries mid-air, lightly dusted with salt. The fries are perfectly crispy and golden brown. The background is a solid, deep navy blue, matching a corporate modern aesthetic. The lighting is crisp, freezing the motion and highlighting the texture of the fries. This creates a sense of rapid, energetic food delivery." style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuAn24R7xNi7P7ROfZwSkglVOcIbSy-dUhx-dkrlx3H_Z25zklTlMGE4jSh7V0gFK_WErI_H-rjikRZGwsA2KLn4bvurT1131JnZTOwFnXGZ9c6DRL0qIdxsESMU8Wji_aSWnfOD8klsRMN-0d-xG3lDOqY4AN4jahRXYLuBOcfTCMK0xOm7I1rdVziRGi0NevLkCVY0BpRQEIlc661aBpoVOs0EZgFlrVtlEeEQ_XsmFP2OxDIm3UoGAoBZmGQWgbhqgaJZ3pAfMzo")'}} />
-      </div>
-    </div>
-    {/* Branding Bottom Left */}
-    <div className="relative z-10 p-margin-desktop opacity-50">
-      <p className="font-body-md text-body-md text-on-primary-fixed">© 2024 FoodExpress. Rapid Service.</p>
-    </div>
-  </div>
-  {/* Right Panel (60%) - Form Area */}
-  <div className="w-full lg:w-3/5 bg-background flex flex-col justify-center items-center p-margin-mobile md:p-margin-desktop relative">
-    {/* Header Logo */}
-    <div className="absolute top-margin-mobile md:top-margin-desktop left-1/2 transform -translate-x-1/2 lg:left-margin-desktop lg:translate-x-0 w-full max-w-[200px]">
-      <img alt="FoodExpress Logo" className="w-full h-auto object-contain" src="https://lh3.googleusercontent.com/aida/AP1WRLur-HFo1Fx0xQ5wmpGjonI7vpS3nVg565R-6h6a9hdktx0MFMBPIA0W2hDaMGkSMcRJlFri4cIVNbk6IEqmohDWgimlipxUqA0ZxDc4pSQvXcefOXxA9RGFYOMPmnr6D69fgnefCJGxrAUPmQmEBPZ7y2ARu8_0Tao9iF8Y81Jb68GRA4MxB3cSiVZ5GwZsHrntplyo4cCG3ShnWRUjuHl_i1AMoLVkVssOo0nFVpQlcUDVtqU15BkdJac" />
-    </div>
-    {/* Central Card */}
-    <div className="w-full max-w-md bg-surface-container-lowest rounded-xl shadow-md p-stack-lg md:p-[48px] flex flex-col gap-stack-lg mt-section-gap lg:mt-0">
-      {/* Tabs */}
-      <div className="flex w-full border-b border-outline-variant relative">
-        <a className="flex-1 text-center py-stack-sm font-headline-sm text-headline-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">
-          Login
-        </a>
-        <div className="flex-1 text-center py-stack-sm font-headline-sm text-headline-sm text-secondary border-b-2 border-secondary relative">
-          Sign Up
-        </div>
-      </div>
-      {/* Form */}
-      <form className="flex flex-col gap-stack-md w-full">
-        {/* Full Name */}
-        <div className="relative w-full">
-          <input className="peer w-full h-[56px] bg-surface border border-outline rounded-xl px-stack-md pt-stack-sm pb-1 text-on-surface font-body-md text-body-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all" id="fullname" placeholder="Full Name" type="text" />
-          <label className="absolute left-stack-md top-1/2 transform -translate-y-1/2 text-on-surface-variant font-body-md text-body-md transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-body-md peer-focus:top-2 peer-focus:text-xs peer-focus:text-secondary peer-valid:top-2 peer-valid:text-xs" htmlFor="fullname">
-            Full Name
-          </label>
-        </div>
-        {/* Phone Number */}
-        <div className="flex gap-stack-sm w-full h-[56px]">
-          <div className="w-24 bg-surface border border-outline rounded-xl flex items-center justify-center font-body-md text-body-md text-on-surface">
-            +91
-          </div>
-          <div className="relative flex-1">
-            <input className="peer w-full h-full bg-surface border border-outline rounded-xl px-stack-md pt-stack-sm pb-1 text-on-surface font-body-md text-body-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all" id="phone" placeholder="Phone Number" type="tel" />
-            <label className="absolute left-stack-md top-1/2 transform -translate-y-1/2 text-on-surface-variant font-body-md text-body-md transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-body-md peer-focus:top-2 peer-focus:text-xs peer-focus:text-secondary peer-valid:top-2 peer-valid:text-xs" htmlFor="phone">
-              Phone Number
-            </label>
-          </div>
-        </div>
-        {/* Email Address */}
-        <div className="relative w-full">
-          <input className="peer w-full h-[56px] bg-surface border border-outline rounded-xl px-stack-md pt-stack-sm pb-1 text-on-surface font-body-md text-body-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all" id="email" placeholder="Email Address" type="email" />
-          <label className="absolute left-stack-md top-1/2 transform -translate-y-1/2 text-on-surface-variant font-body-md text-body-md transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-body-md peer-focus:top-2 peer-focus:text-xs peer-focus:text-secondary peer-valid:top-2 peer-valid:text-xs" htmlFor="email">
-            Email Address
-          </label>
-        </div>
-        {/* Checkbox */}
-        <div className="flex items-start gap-stack-sm mt-stack-sm">
-          <div className="flex items-center h-5">
-            <input className="w-5 h-5 rounded border-outline text-secondary focus:ring-secondary bg-surface" id="terms" type="checkbox" />
-          </div>
-          <label className="font-body-md text-sm text-on-surface-variant" htmlFor="terms">
-            I agree to the <a className="text-secondary hover:underline" href="#">Terms &amp; Conditions</a> and <a className="text-secondary hover:underline" href="#">Privacy Policy</a>
-          </label>
-        </div>
-        {/* Action Button */}
-        <button className="w-full mt-stack-md bg-secondary text-on-secondary font-label-bold text-label-bold py-4 rounded-full shadow-md hover:shadow-lg hover:-translate-y-[2px] transition-all duration-200 flex justify-center items-center gap-2" type="button">
-          Create Account
-          <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
-        </button>
-      </form>
-      {/* Footer Link */}
-      <div className="text-center mt-stack-sm">
-        <a className="font-body-md text-body-md text-on-surface-variant hover:text-secondary transition-colors" href="#">
-          Continue as Guest
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { register } = useAuth();
+  const navigate = useNavigate();
 
-    </>
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+    setLoading(true);
+    try {
+      await register(name, email, password);
+      navigate('/');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Registration failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex">
+      {/* Left Panel */}
+      <div className="hidden lg:flex flex-col w-[40%] bg-primary-container relative p-10 overflow-hidden justify-between">
+        <div className="z-10 relative">
+          <Link to="/" className="text-on-primary font-bold text-2xl">🍔 FoodExpress</Link>
+        </div>
+        <div className="z-10 relative mt-16 flex flex-col items-center">
+          <div className="relative w-full max-w-[400px] aspect-square mb-8">
+            <div className="absolute top-0 left-0 w-48 h-48 rounded-xl shadow-xl bg-cover bg-center transform -rotate-6 z-20 border-4 border-white/10" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDzvDeLJRQgwiz5FzjpHTqBKJ3cd06HNLf46PMprm4HbOKjmfHQO2bumVvJ3ghb5231NOfB-fcMvHzEXmxaGKBIaXRgIMuhdg0b-Y28YL9YyiK8jskPqjOgLowzB9nxK_IOnMtM8PMxhX2yXNrLyrZs9PNiSaeQPnVszUG23qCeVooT7qBJpVv4VSqVRjRN9ZggwTTRs1QDHSLXT73e0HzeGBFK4cr6cpgR9QUg3qcQoCJZRJbN1CBvIr_N7OPEktLG_plNaTdXEbk")'}} />
+            <div className="absolute top-12 right-0 w-40 h-40 rounded-full shadow-xl bg-cover bg-center transform rotate-6 z-10 border-4 border-white/10" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuAJ0K-mntTTaWIbFo53HoC_yWGh99nNFCTnMCqCShVr2pkDWf1Ow_zT_hTjg02kAUgxxgCnHmdC54hTkt2_PF1VrmxA2JjFwqSP8zq-8Hwu7VjhzouhfLWhflf4cQVNDCQNTjVNNtDKqmuQQ0VrlxiBdafrQlOCRt_URQY7nY4PKwuFr2cYbArqeNGGRCC6LlFEbB5Yye0SCE3_6dcnD0n32tSJ1XzcNfskpT6hgp0AojdTiZSZEK9-HPdwVKK9dh8t9cjQybDT2r0")'}} />
+          </div>
+          <h1 className="text-4xl font-extrabold text-on-primary text-center mb-2 tracking-tight">Join the<br/>food revolution.</h1>
+          <p className="text-on-primary/70 text-center max-w-sm">Create your account and start ordering in minutes.</p>
+        </div>
+        <div />
+      </div>
+      {/* Right Panel */}
+      <div className="w-full lg:w-[60%] flex flex-col justify-center items-center p-6 md:p-10 bg-surface overflow-y-auto">
+        <div className="w-full max-w-[420px] bg-white rounded-2xl shadow-md p-8 border border-outline-variant/30 flex flex-col">
+          <div className="lg:hidden flex justify-center mb-8">
+            <Link to="/" className="font-bold text-2xl">🍔 FoodExpress</Link>
+          </div>
+          <h2 className="text-2xl font-bold text-on-surface mb-1">Create Account</h2>
+          <p className="text-on-surface-variant text-sm mb-6">Fill in your details to get started.</p>
+
+          {error && <div className="bg-error-container text-on-error-container p-3 rounded-lg mb-4 text-sm">{error}</div>}
+
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-on-surface mb-1" htmlFor="name">Full Name</label>
+              <input id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="John Doe" required className="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface focus:ring-2 focus:ring-secondary focus:border-secondary text-sm" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-on-surface mb-1" htmlFor="email">Email</label>
+              <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" required className="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface focus:ring-2 focus:ring-secondary focus:border-secondary text-sm" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-on-surface mb-1" htmlFor="password">Password</label>
+              <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min 6 characters" required minLength={6} className="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface focus:ring-2 focus:ring-secondary focus:border-secondary text-sm" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-on-surface mb-1" htmlFor="confirmPassword">Confirm Password</label>
+              <input id="confirmPassword" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="••••••••" required className="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface focus:ring-2 focus:ring-secondary focus:border-secondary text-sm" />
+            </div>
+            <button type="submit" disabled={loading} className="w-full bg-secondary text-on-secondary py-3 rounded-lg font-bold text-sm hover:-translate-y-0.5 transition-all disabled:opacity-50">
+              {loading ? 'Creating Account...' : 'Create Account'}
+            </button>
+          </form>
+
+          <p className="text-center text-sm text-on-surface-variant mt-6">
+            Already have an account? <Link to="/login" className="text-secondary font-bold hover:underline">Sign In</Link>
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }
