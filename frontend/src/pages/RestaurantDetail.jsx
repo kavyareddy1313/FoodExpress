@@ -11,7 +11,7 @@ export default function RestaurantDetail() {
   const [loading, setLoading] = useState(true);
   const [addingId, setAddingId] = useState(null);
   const { isAuthenticated } = useAuth();
-  const { addToCart, itemCount } = useCart();
+  const { addToCart, itemCount, setIsCartOpen, clearCart } = useCart();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,6 +25,9 @@ export default function RestaurantDetail() {
     }).catch(() => setLoading(false));
   }, [id]);
 
+  const [conflictModalOpen, setConflictModalOpen] = useState(false);
+  const [pendingFood, setPendingFood] = useState(null);
+
   const handleAddToCart = async (food) => {
     if (!isAuthenticated) { navigate('/login'); return; }
     setAddingId(food._id);
@@ -36,10 +39,43 @@ export default function RestaurantDetail() {
         quantity: 1,
         image: food.image,
         restaurantName: restaurant?.name || '',
+        restaurantId: restaurant?._id || '',
       });
-      navigate('/checkout');
-    } catch (err) { console.error(err); }
-    finally { setAddingId(null); }
+      import('react-hot-toast').then(module => module.default.success('Added to cart!'));
+    } catch (err) {
+      if (err.response?.status === 409) {
+        setPendingFood(food);
+        setConflictModalOpen(true);
+      } else {
+        import('react-hot-toast').then(module => module.default.error('Failed to add to cart'));
+      }
+    } finally { 
+      setAddingId(null); 
+    }
+  };
+
+  const handleClearAndAdd = async () => {
+    setConflictModalOpen(false);
+    if (!pendingFood) return;
+    setAddingId(pendingFood._id);
+    try {
+      await clearCart();
+      await addToCart({
+        foodItemId: pendingFood._id,
+        name: pendingFood.name,
+        price: pendingFood.price,
+        quantity: 1,
+        image: pendingFood.image,
+        restaurantName: restaurant?.name || '',
+        restaurantId: restaurant?._id || '',
+      });
+      import('react-hot-toast').then(module => module.default.success('Cart cleared and item added!'));
+    } catch (err) {
+      import('react-hot-toast').then(module => module.default.error('Failed to add item'));
+    } finally {
+      setAddingId(null);
+      setPendingFood(null);
+    }
   };
 
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-secondary"></div></div>;
@@ -55,7 +91,7 @@ export default function RestaurantDetail() {
           <Link to="/" className="font-bold text-xl text-on-surface">🍔 FoodExpress</Link>
           <div className="flex items-center gap-4">
             {isAuthenticated && (
-              <button onClick={() => navigate('/checkout')} className="p-2 text-on-surface-variant hover:text-secondary rounded-full relative">
+              <button onClick={() => setIsCartOpen(true)} className="p-2 text-on-surface-variant hover:text-secondary rounded-full relative">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" /></svg>
                 {itemCount > 0 && <span className="absolute -top-1 -right-1 bg-secondary text-on-secondary text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">{itemCount}</span>}
               </button>
@@ -118,6 +154,32 @@ export default function RestaurantDetail() {
           ))
         )}
       </main>
+
+      {/* Conflict Modal */}
+      {conflictModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl">
+            <h3 className="text-xl font-bold text-on-surface mb-2">Start a new cart?</h3>
+            <p className="text-on-surface-variant text-sm mb-6">
+              Your cart contains items from another restaurant. Would you like to clear the cart and add this item?
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button 
+                onClick={() => { setConflictModalOpen(false); setPendingFood(null); }}
+                className="px-4 py-2 rounded-lg font-bold text-on-surface-variant hover:bg-surface-variant transition-colors"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleClearAndAdd}
+                className="px-4 py-2 rounded-lg font-bold bg-secondary text-on-secondary hover:brightness-105 transition-all shadow-md"
+              >
+                Clear & Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
