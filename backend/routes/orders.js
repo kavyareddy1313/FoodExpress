@@ -53,6 +53,7 @@ router.post('/razorpay/verify', protect, async (req, res) => {
 
       const newOrder = await Order.create({
         userId: req.user._id,
+        restaurantId: cart.restaurantId,
         items: cart.items,
         totalAmount: cart.totalAmount,
         deliveryAddress,
@@ -88,6 +89,7 @@ router.post('/', protect, async (req, res) => {
 
     const order = await Order.create({
       userId: req.user._id,
+      restaurantId: cart.restaurantId,
       items: cart.items,
       totalAmount: cart.totalAmount,
       deliveryAddress,
