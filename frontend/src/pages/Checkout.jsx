@@ -3,70 +3,87 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import api from '../services/api';
+import toast from 'react-hot-toast';
+
+import AddressSelector from '../components/Checkout/AddressSelector';
+import PaymentOptions from '../components/Checkout/PaymentOptions';
+import OrderSummary from '../components/Checkout/OrderSummary';
 
 export default function Checkout() {
-  const { cart, itemCount, updateQuantity, removeFromCart } = useCart();
+  const { cart, itemCount } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [address, setAddress] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('cod');
+  
+  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState('online');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handlePlaceOrder = async (e) => {
-    e.preventDefault();
-    if (!address.trim()) { setError('Please enter a delivery address'); return; }
+  const deliveryFee = 40;
+  const taxes = cart.totalAmount * 0.05;
+  const grandTotal = cart.totalAmount + deliveryFee + taxes;
+
+  const handlePlaceOrder = async () => {
+    if (!selectedAddress) {
+      toast.error('Please select a delivery address');
+      return;
+    }
     setLoading(true);
     setError('');
     
     try {
       if (paymentMethod === 'cod') {
-        const { data } = await api.post('/orders', { deliveryAddress: address, paymentMethod });
-        navigate(`/tracking/${data._id}`);
-      } else if (paymentMethod === 'online') {
-        // 1. Create Razorpay order on backend
+        const { data } = await api.post('/orders', { deliveryAddress: selectedAddress, paymentMethod });
+        navigate('/success', { state: { orderId: data._id, totalAmount: grandTotal } });
+      } else {
+        // Online Payment via Razorpay
         const { data: orderData } = await api.post('/orders/razorpay');
         
-        // 2. Initialize Razorpay Checkout
         const options = {
-          key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_SJb1Khp4Xsxh2j', // In a real app, inject this via an endpoint or env
-          amount: orderData.amount,
+          key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_SJb1Khp4Xsxh2j',
+          amount: Math.round(grandTotal * 100),
           currency: orderData.currency,
           name: 'FoodExpress',
           description: 'Food Order Payment',
           order_id: orderData.id,
           handler: async function (response) {
             try {
-              // 3. Verify payment on backend
               const verifyRes = await api.post('/orders/razorpay/verify', {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
-                deliveryAddress: address
+                deliveryAddress: selectedAddress
               });
-              navigate(`/tracking/${verifyRes.data.order._id}`);
+              navigate('/success', { state: { orderId: verifyRes.data.order._id, totalAmount: grandTotal } });
             } catch (err) {
               setError(err.response?.data?.message || 'Payment verification failed');
+              toast.error('Payment verification failed');
             }
           },
           prefill: {
             name: user?.name || '',
             email: user?.email || '',
+            contact: selectedAddress?.phone || ''
           },
           theme: {
-            color: '#FF5722', // Secondary color
+            color: '#FF5722',
           }
         };
 
         const rzp = new window.Razorpay(options);
         rzp.on('payment.failed', function (response) {
           setError('Payment failed or was cancelled');
+          toast.error('Payment failed');
         });
         rzp.open();
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to place order');
-    } finally { setLoading(false); }
+      const msg = err.response?.data?.message || 'Failed to place order';
+      setError(msg);
+      toast.error(msg);
+    } finally { 
+      setLoading(false); 
+    }
   };
 
   if (itemCount === 0) {
@@ -81,74 +98,50 @@ export default function Checkout() {
 
   return (
     <div className="min-h-screen bg-surface flex flex-col">
-      <header className="bg-surface sticky top-0 z-50 shadow-md">
+      <header className="bg-surface sticky top-0 z-40 shadow-sm border-b border-outline-variant/20">
         <div className="flex justify-between items-center px-6 md:px-10 w-full max-w-[1280px] mx-auto h-16">
           <Link to="/" className="font-bold text-xl text-on-surface">🍔 FoodExpress</Link>
-          <span className="text-sm text-on-surface-variant">Checkout ({itemCount} items)</span>
+          <div className="hidden sm:flex items-center text-sm font-semibold text-on-surface-variant gap-2">
+            <span className="text-secondary">Cart</span>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+            <span className="text-secondary">Checkout</span>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+            <span>Payment</span>
+          </div>
         </div>
       </header>
 
       <main className="flex-grow w-full max-w-[1280px] mx-auto px-6 md:px-10 py-8">
+        <h1 className="text-3xl font-extrabold text-on-surface mb-8">Secure Checkout</h1>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Cart Items */}
-          <div className="lg:col-span-2">
-            <h2 className="text-2xl font-bold text-on-surface mb-6">Your Cart</h2>
-            <div className="flex flex-col gap-4">
-              {cart.items?.map((item) => (
-                <div key={item.foodItemId} className="bg-white rounded-xl shadow-sm border border-outline-variant/20 p-4 flex items-center gap-4">
-                  {item.image && <img src={item.image} alt={item.name} className="w-20 h-20 rounded-lg object-cover" />}
-                  <div className="flex-1">
-                    <h3 className="font-bold text-on-surface">{item.name}</h3>
-                    <p className="text-sm text-on-surface-variant">{item.restaurantName}</p>
-                    <p className="font-bold text-secondary mt-1">₹{item.price}</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button onClick={() => updateQuantity(item.foodItemId, item.quantity - 1)} className="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center font-bold text-on-surface hover:bg-outline-variant transition-colors">−</button>
-                    <span className="w-8 text-center font-bold">{item.quantity}</span>
-                    <button onClick={() => updateQuantity(item.foodItemId, item.quantity + 1)} className="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-bold hover:opacity-90 transition-opacity">+</button>
-                  </div>
-                  <button onClick={() => removeFromCart(item.foodItemId)} className="text-error hover:text-on-error-container transition-colors p-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                  </button>
-                </div>
-              ))}
-            </div>
+          
+          <div className="lg:col-span-2 flex flex-col gap-8">
+            <section className="bg-white rounded-2xl shadow-sm border border-outline-variant/20 p-6 md:p-8">
+              <h2 className="text-xl font-bold text-on-surface mb-6 flex items-center gap-2">
+                <span className="w-8 h-8 rounded-full bg-secondary text-white flex items-center justify-center text-sm">1</span>
+                Delivery Address
+              </h2>
+              <AddressSelector selectedAddress={selectedAddress} onSelect={setSelectedAddress} />
+            </section>
+
+            <section className="bg-white rounded-2xl shadow-sm border border-outline-variant/20 p-6 md:p-8">
+              <h2 className="text-xl font-bold text-on-surface mb-6 flex items-center gap-2">
+                <span className="w-8 h-8 rounded-full bg-secondary text-white flex items-center justify-center text-sm">2</span>
+                Payment Options
+              </h2>
+              <PaymentOptions paymentMethod={paymentMethod} setPaymentMethod={setPaymentMethod} />
+            </section>
           </div>
 
-          {/* Order Summary */}
           <div>
-            <div className="bg-white rounded-xl shadow-md border border-outline-variant/20 p-6 sticky top-24">
-              <h3 className="text-lg font-bold text-on-surface mb-4">Order Summary</h3>
-              <div className="flex justify-between text-sm text-on-surface-variant mb-2"><span>Subtotal</span><span>₹{cart.totalAmount}</span></div>
-              <div className="flex justify-between text-sm text-on-surface-variant mb-2"><span>Delivery Fee</span><span className="text-secondary font-bold">FREE</span></div>
-              <hr className="my-3 border-outline-variant" />
-              <div className="flex justify-between font-bold text-on-surface text-lg mb-6"><span>Total</span><span>₹{cart.totalAmount}</span></div>
-
-              {error && <div className="bg-error-container text-on-error-container p-3 rounded-lg mb-4 text-sm">{error}</div>}
-
-              <form onSubmit={handlePlaceOrder} className="flex flex-col gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-on-surface mb-1">Delivery Address</label>
-                  <textarea value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Enter your full delivery address" required rows={3} className="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface focus:ring-2 focus:ring-secondary text-sm" />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-on-surface mb-2">Payment Method</label>
-                  <div className="flex gap-3">
-                    <label className={`flex-1 flex items-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition-all ${paymentMethod === 'cod' ? 'border-secondary bg-secondary/5' : 'border-outline-variant'}`}>
-                      <input type="radio" name="payment" value="cod" checked={paymentMethod === 'cod'} onChange={(e) => setPaymentMethod(e.target.value)} className="text-secondary" />
-                      <span className="text-sm font-semibold">Cash on Delivery</span>
-                    </label>
-                    <label className={`flex-1 flex items-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition-all ${paymentMethod === 'online' ? 'border-secondary bg-secondary/5' : 'border-outline-variant'}`}>
-                      <input type="radio" name="payment" value="online" checked={paymentMethod === 'online'} onChange={(e) => setPaymentMethod(e.target.value)} className="text-secondary" />
-                      <span className="text-sm font-semibold">Online Payment</span>
-                    </label>
-                  </div>
-                </div>
-                <button type="submit" disabled={loading} className="w-full bg-secondary text-on-secondary py-3 rounded-lg font-bold hover:-translate-y-0.5 transition-all disabled:opacity-50">
-                  {loading ? 'Placing Order...' : `Place Order — ₹${cart.totalAmount}`}
-                </button>
-              </form>
-            </div>
+            <OrderSummary 
+              cart={cart}
+              selectedAddress={selectedAddress}
+              paymentMethod={paymentMethod}
+              onPlaceOrder={handlePlaceOrder}
+              loading={loading}
+              error={error}
+            />
           </div>
         </div>
       </main>
