@@ -6,6 +6,7 @@ const CartContext = createContext(null);
 
 export function CartProvider({ children }) {
   const [cart, setCart] = useState({ items: [], totalAmount: 0 });
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const { isAuthenticated } = useAuth();
 
   const fetchCart = useCallback(async () => {
@@ -49,7 +50,7 @@ export function CartProvider({ children }) {
   const itemCount = cart.items?.reduce((sum, i) => sum + i.quantity, 0) || 0;
 
   return (
-    <CartContext.Provider value={{ cart, itemCount, addToCart, updateQuantity, removeFromCart, clearCart, fetchCart }}>
+    <CartContext.Provider value={{ cart, itemCount, addToCart, updateQuantity, removeFromCart, clearCart, fetchCart, isCartOpen, setIsCartOpen }}>
       {children}
     </CartContext.Provider>
   );
