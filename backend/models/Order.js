@@ -10,7 +10,19 @@ const orderSchema = new mongoose.Schema({
     image: String,
   }],
   totalAmount: { type: Number, required: true },
-  deliveryAddress: { type: String, required: true },
+  restaurantId: { type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' },
+  deliveryAddress: {
+    fullName: String,
+    phone: String,
+    flatNo: String,
+    street: String,
+    landmark: String,
+    area: String,
+    city: String,
+    state: String,
+    pincode: String,
+    type: String
+  },
   paymentMethod: { type: String, enum: ['cod', 'online'], default: 'cod' },
   status: {
     type: String,
