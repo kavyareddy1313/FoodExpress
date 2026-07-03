@@ -19,11 +19,28 @@ router.get('/', protect, async (req, res) => {
 // POST /api/cart — Add item to cart
 router.post('/', protect, async (req, res) => {
   try {
-    const { foodItemId, name, price, quantity, image, restaurantName } = req.body;
+    const { foodItemId, name, price, quantity, image, restaurantName, restaurantId } = req.body;
+
+    if (!restaurantId) {
+      return res.status(400).json({ message: 'Restaurant ID is required' });
+    }
 
     let cart = await Cart.findOne({ userId: req.user._id });
+    
     if (!cart) {
-      cart = new Cart({ userId: req.user._id, items: [] });
+      cart = new Cart({ userId: req.user._id, items: [], restaurantId });
+    } else {
+      // Check for restaurant conflict
+      if (cart.items.length > 0 && cart.restaurantId && cart.restaurantId.toString() !== restaurantId) {
+        return res.status(409).json({ 
+          message: 'Your cart contains items from another restaurant.',
+          code: 'RESTAURANT_CONFLICT'
+        });
+      }
+      // If cart was empty but existed, update restaurantId
+      if (cart.items.length === 0) {
+        cart.restaurantId = restaurantId;
+      }
     }
 
     // Check if item already exists in cart
@@ -40,6 +57,7 @@ router.post('/', protect, async (req, res) => {
     await cart.save();
     res.json(cart);
   } catch (error) {
+    console.error('Cart POST Error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
