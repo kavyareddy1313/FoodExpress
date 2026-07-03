@@ -11,6 +11,7 @@ const cartItemSchema = new mongoose.Schema({
 
 const cartSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
+  restaurantId: { type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant', default: null },
   items: [cartItemSchema],
   totalAmount: { type: Number, default: 0 },
 }, { timestamps: true });
