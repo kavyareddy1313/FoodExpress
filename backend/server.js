@@ -23,12 +23,14 @@ import restaurantRoutes from './routes/restaurants.js';
 import foodRoutes from './routes/foods.js';
 import cartRoutes from './routes/cart.js';
 import orderRoutes from './routes/orders.js';
+import addressRoutes from './routes/address.js';
 
 app.use('/api/auth', authRoutes);
 app.use('/api/restaurants', restaurantRoutes);
 app.use('/api/foods', foodRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/address', addressRoutes);
 
 // Health check endpoint
 app.get('/api/health', async (req, res) => {
